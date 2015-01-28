@@ -2,6 +2,7 @@ package com.lukaszneumann.jackadventure;
 
 import box2dLight.Light;
 import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 public class SmallCandyLight {
 
     private MyGame myGame;
+    private WorldGame worldGame;
+    private RayHandler rayHandler;
     private int rayLight = 128;
     private float maxDistancePoint = 0;
     private ArrayList<Light> smallCandyLight = new ArrayList<Light>(10);
@@ -25,8 +28,10 @@ public class SmallCandyLight {
     private int newCountBody = 0;
 
 
-    public SmallCandyLight(MyGame myGame) {
+    public SmallCandyLight(MyGame myGame, WorldGame worldGame, RayHandler rayHandler) {
         this.myGame = myGame;
+        this.worldGame = worldGame;
+        this.rayHandler = rayHandler;
     }
 
     public void setRadiusLight(float maxDistancePoint) {
@@ -84,10 +89,13 @@ public class SmallCandyLight {
 
         for (int i = 0; i < newCountBody; i++) {
 
-            Body body = myGame.worldGame.getWorld().createBody(bodyDefSmallCandy);
+            Body body = worldGame.getWorld().createBody(bodyDefSmallCandy);
             body.createFixture(fixtureDefSmallCandy);
-            body.applyForceToCenter(MathUtils.random(-maxDistancePoint / 6, maxDistancePoint / 6) * body.getMass() * -myGame.worldGame.getWorld().getGravity().y,
-                    MathUtils.random(maxDistancePoint / 5, maxDistancePoint / 3) * body.getMass() * -myGame.worldGame.getWorld().getGravity().y, true);
+            body.applyForceToCenter(MathUtils.random(-maxDistancePoint / 2, maxDistancePoint / 2) * 0.1f * -worldGame.getGravity(),
+                    MathUtils.random(maxDistancePoint / 2, maxDistancePoint / 2) * 0.1f * -worldGame.getGravity(), true);
+
+
+
             body.setGravityScale(MathUtils.random(0.4f, 0.9f));
             smallCandyBody.add(body);
         }
@@ -98,7 +106,7 @@ public class SmallCandyLight {
     }
 
     private void destroyBody(int which) {
-        myGame.worldGame.getWorld().destroyBody(smallCandyBody.get(which));
+        worldGame.getWorld().destroyBody(smallCandyBody.get(which));
     }
 
 
@@ -106,7 +114,7 @@ public class SmallCandyLight {
 
         for (int i = 0; i < newCountBody; i++) {
 
-            PointLight pointLight = new PointLight(myGame.rayHandler, rayLight, null, 0, 0, 0);
+            PointLight pointLight = new PointLight(rayHandler, rayLight, null, 0, 0, 0);
             pointLight.setColor(MathUtils.random(), MathUtils.random(), MathUtils.random(), 1f);
             pointLight.setDistance(MathUtils.random(maxDistancePoint, 2 * maxDistancePoint));
             pointLight.setPosition(smallCandyBody.get(i).getPosition().x * WorldGame.METERS_TO_PIXELS,
@@ -128,7 +136,7 @@ public class SmallCandyLight {
     private void destroyAllBodyAndLight() {
 
         for (int i = 0; i < smallCandyLight.size(); i++) {
-            myGame.worldGame.getWorld().destroyBody(smallCandyBody.get(i));
+            worldGame.getWorld().destroyBody(smallCandyBody.get(i));
             smallCandyBody.remove(i);
 
             smallCandyLight.get(i).dispose();

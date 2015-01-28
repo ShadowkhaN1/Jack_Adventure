@@ -1,12 +1,8 @@
 package com.lukaszneumann.jackadventure;
 
 
-import box2dLight.Light;
-import box2dLight.PointLight;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -18,22 +14,21 @@ import java.util.ArrayList;
 public class Witch extends Sprite {
 
     private MyGame myGame;
+    private WorldGame worldGame;
     private Body bodyWitch;
     private Body boundsScreen;
     private ArrayList<Body> starsBody = new ArrayList<Body>(10);
-    private ArrayList<Light> starsLight = new ArrayList<Light>(10);
-    private final int raysLight = 128;
-    private float stateTimeStar = 0;
     private boolean rightFace = true;
     private boolean isVisible = false;
 
 
-    public Witch(MyGame myGame) {
+    public Witch(MyGame myGame, WorldGame worldGame) {
 
         this.myGame = myGame;
+        this.worldGame = worldGame;
 
 
-        this.set(new Sprite(myGame.getContent().getAssetManager().get("Enemy/witch.png", Texture.class)));
+        this.set(new Sprite(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Enemy/witch.png", Texture.class)));
         this.setOriginCenter();
 
 
@@ -47,10 +42,9 @@ public class Witch extends Sprite {
             if (bodyWitch == null) {
                 createPhysicsWitch();
                 createPhysicsBoundScreen();
-//                laughSound(true);
+                laughSound(true);
             }
 
-            stateTimeStar += deltaTime;
 
             this.setX((bodyWitch.getPosition().x * WorldGame.METERS_TO_PIXELS) - this.getWidth() / 2);
             this.setY((bodyWitch.getPosition().y * WorldGame.METERS_TO_PIXELS) - this.getHeight() / 2);
@@ -62,31 +56,16 @@ public class Witch extends Sprite {
                 rightFace = false;
             }
 
-//            if (stateTimeStar >= 1f) {
-//
-//                stateTimeStar = 0;
-//                createStar(MathUtils.random(3, 5));
-//                createStarLight();
-//            }
-
         } else {
 
             if (bodyWitch != null) {
 
 //            destroy body witch of World
-                myGame.worldGame.getWorld().destroyBody(bodyWitch);
+                worldGame.getWorld().destroyBody(bodyWitch);
 //            destroy bounds screen of World
-                myGame.worldGame.getWorld().destroyBody(boundsScreen);
+                worldGame.getWorld().destroyBody(boundsScreen);
 //            destroy body witch
                 bodyWitch = null;
-            }
-        }
-
-        for (int i = 0; i < starsBody.size(); i++) {
-
-            if (starsBody.get(i).getPosition().y < myGame.HEIGHT_SCREEN / 2) {
-                destroyStar(i);
-                destroyStarLight(i);
             }
         }
     }
@@ -135,7 +114,7 @@ public class Witch extends Sprite {
                 (this.getY() + this.getOriginY()) * WorldGame.PIXELS_TO_METERS);
 
 
-        bodyWitch = myGame.worldGame.getWorld().createBody(bodyDef);
+        bodyWitch = worldGame.getWorld().createBody(bodyDef);
         bodyWitch.setLinearVelocity(4, 0);
         bodyWitch.setGravityScale(0);
         bodyWitch.createFixture(fixtureDefWitch);
@@ -145,79 +124,10 @@ public class Witch extends Sprite {
     }
 
 
-    private void createStar(int count) {
-
-        CircleShape shape = new CircleShape();
-        shape.setRadius(MathUtils.random(this.getWidth() / 20, this.getWidth() / 10));
-
-        FixtureDef fixtureDefStar = new FixtureDef();
-        fixtureDefStar.shape = shape;
-        fixtureDefStar.density = 1f;
-        fixtureDefStar.friction = 0.03f;
-        fixtureDefStar.restitution = 0.5f;
-        fixtureDefStar.filter.categoryBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.StarWitch);
-        fixtureDefStar.filter.maskBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.StarWitch);
-
-
-        BodyDef bodyDefStar = new BodyDef();
-        bodyDefStar.type = BodyDef.BodyType.DynamicBody;
-
-
-        for (int i = 0; i < count; i++) {
-
-            Body bodyStar;
-            bodyDefStar.position.y = this.getY();
-
-            if (rightFace) {
-
-                bodyDefStar.position.x = this.getX();
-                bodyStar = myGame.worldGame.getWorld().createBody(bodyDefStar);
-                bodyStar.createFixture(fixtureDefStar);
-                starsBody.add(bodyStar);
-                starsBody.get(starsBody.size() - 1).applyForceToCenter(-MathUtils.random(5, 10) *
-                        starsBody.get(starsBody.size() - 1).getMass() * -myGame.worldGame.getWorld().getGravity().y, 0, true);
-
-            } else {
-
-                bodyDefStar.position.x = this.getX() + this.getWidth();
-                bodyStar = myGame.worldGame.getWorld().createBody(bodyDefStar);
-                bodyStar.createFixture(fixtureDefStar);
-                starsBody.add(bodyStar);
-                starsBody.get(starsBody.size() - 1).applyForceToCenter(MathUtils.random(5, 10) *
-                        starsBody.get(starsBody.size() - 1).getMass() * -myGame.worldGame.getWorld().getGravity().y, 0, true);
-            }
-        }
-
-        shape.dispose();
-
-    }
-
     private void destroyStar(int which) {
 
-        myGame.worldGame.getWorld().destroyBody(starsBody.get(which));
+        worldGame.getWorld().destroyBody(starsBody.get(which));
         starsBody.remove(which);
-
-    }
-
-
-    private void createStarLight() {
-
-        for (int i = 0; i < starsBody.size(); i++) {
-            PointLight pointLight = new PointLight(myGame.rayHandler, raysLight, Color.WHITE,
-                    MathUtils.random(this.getWidth() / 20, this.getWidth() / 10), 0, 0);
-            pointLight.attachToBody(starsBody.get(i));
-
-            starsLight.add(pointLight);
-
-        }
-
-    }
-
-    private void destroyStarLight(int which) {
-
-        starsLight.get(which).dispose();
-        starsLight.get(which).remove();
-        starsLight.remove(which);
 
     }
 
@@ -242,7 +152,7 @@ public class Witch extends Sprite {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
-        boundsScreen = myGame.worldGame.getWorld().createBody(bodyDef);
+        boundsScreen = worldGame.getWorld().createBody(bodyDef);
         boundsScreen.createFixture(fixtureDefBound);
 
         shapeBound.dispose();
@@ -251,7 +161,7 @@ public class Witch extends Sprite {
 
     private void laughSound(boolean isLaughing) {
         if (isLaughing == true) {
-            myGame.soundGame.getLaughWitch().play();
+            myGame.soundGame.getLaughWitch();
         }
     }
 

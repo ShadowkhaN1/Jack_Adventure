@@ -1,6 +1,7 @@
 package com.lukaszneumann.jackadventure;
 
 import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,6 +18,8 @@ public class Ghost extends Sprite {
 
 
     private MyGame myGame;
+    private WorldGame worldGame;
+    private RayHandler rayHandler;
     private Body ghostBody;
     private boolean destroy = false;
     private float stateTime = 0;
@@ -25,15 +28,20 @@ public class Ghost extends Sprite {
     private float distanceRadiusPoint = 0;
 
 
-    public Ghost(MyGame myGame) {
+    public Ghost(MyGame myGame, WorldGame worldGame, RayHandler rayHandler) {
 
         this.myGame = myGame;
+        this.worldGame = worldGame;
+        this.rayHandler = rayHandler;
 
-        this.set(new Sprite(myGame.getContent().getAssetManager().get("Enemy/Ghost.png", Texture.class)));
+        float scale = MathUtils.random(0.7f, 1f);
+
+        this.set(new Sprite(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Enemy/Ghost.png", Texture.class)));
+        setSize(this.getWidth() * scale, this.getHeight() * scale);
         this.setOriginCenter();
 
         distanceRadiusPoint = this.getWidth();
-        pointLight = new PointLight(myGame.rayHandler, rayPoint, Color.WHITE, distanceRadiusPoint, 0, 0);
+        pointLight = new PointLight(rayHandler, rayPoint, Color.WHITE, distanceRadiusPoint, 0, 0);
     }
 
 
@@ -48,10 +56,7 @@ public class Ghost extends Sprite {
         pointLight.setPosition(ghostBody.getPosition().x * WorldGame.METERS_TO_PIXELS, ghostBody.getPosition().y * WorldGame.METERS_TO_PIXELS);
         pointLight.setDistance(getDistanceRadiusPoint());
 
-        if (destroy == true) {
-            destroyBody();
-            destroyPointLight();
-        }
+
     }
 
 
@@ -68,7 +73,7 @@ public class Ghost extends Sprite {
 
         FixtureDef fixtureDefGhost = new FixtureDef();
         fixtureDefGhost.shape = shape;
-        fixtureDefGhost.restitution = 1f;
+        fixtureDefGhost.restitution = 0f;
         fixtureDefGhost.density = 1f;
         fixtureDefGhost.filter.categoryBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.Player);
         fixtureDefGhost.filter.maskBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.Player);
@@ -80,8 +85,8 @@ public class Ghost extends Sprite {
         bodyDef.position.y = y * WorldGame.PIXELS_TO_METERS;
 
 
-        ghostBody = myGame.worldGame.getWorld().createBody(bodyDef);
-        ghostBody.createFixture(fixtureDefGhost);
+        ghostBody = worldGame.getWorld().createBody(bodyDef);
+        ghostBody.createFixture(fixtureDefGhost).setUserData("Ghost");
 
 
         shape.dispose();
@@ -90,7 +95,7 @@ public class Ghost extends Sprite {
 
 
     private void destroyBody() {
-        myGame.worldGame.getWorld().destroyBody(ghostBody);
+        worldGame.getWorld().destroyBody(ghostBody);
     }
 
     private void destroyPointLight() {
@@ -98,8 +103,10 @@ public class Ghost extends Sprite {
         pointLight.remove();
     }
 
-    public void setDestroy(boolean destroy) {
-        this.destroy = destroy;
+    public void destroy() {
+
+        destroyBody();
+        destroyPointLight();
     }
 
     public boolean isDestroy() {

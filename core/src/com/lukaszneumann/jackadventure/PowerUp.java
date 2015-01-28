@@ -14,17 +14,19 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 public class PowerUp extends Sprite {
 
     private MyGame myGame;
+    private WorldGame worldGame;
     private Body body;
     private TypeOfPowerUp typeOfPowerUp;
 
     public static enum TypeOfPowerUp {
-        Copter, Shield, Magnet
+        Copter, Shield, Magnet,
     }
 
 
-    public PowerUp(MyGame myGame, Texture texture) {
+    public PowerUp(MyGame myGame, WorldGame worldGame, Texture texture) {
 
         this.myGame = myGame;
+        this.worldGame = worldGame;
 
         this.set(new Sprite(texture));
         this.setOriginCenter();
@@ -41,7 +43,7 @@ public class PowerUp extends Sprite {
     }
 
     public void destroyBody() {
-        myGame.worldGame.getWorld().destroyBody(body);
+        worldGame.getWorld().destroyBody(body);
     }
 
     public void setPower(TypeOfPowerUp typeOfPowerUp) {
@@ -60,7 +62,7 @@ public class PowerUp extends Sprite {
 
         FixtureDef fixtureDefPowerUp = new FixtureDef();
         fixtureDefPowerUp.shape = shape;
-        fixtureDefPowerUp.density = 0.0001f;
+        fixtureDefPowerUp.density = 1f;
         fixtureDefPowerUp.isSensor = true;
 
         BodyDef bodyDefPowerUp = new BodyDef();
@@ -68,7 +70,7 @@ public class PowerUp extends Sprite {
         bodyDefPowerUp.position.x = MathUtils.random(0, (MyGame.WIDTH_SCREEN - this.getWidth()) * WorldGame.PIXELS_TO_METERS);
         bodyDefPowerUp.position.y = (myGame.HEIGHT_SCREEN + this.getHeight()) * WorldGame.PIXELS_TO_METERS;
 
-        body = myGame.worldGame.getWorld().createBody(bodyDefPowerUp);
+        body = worldGame.getWorld().createBody(bodyDefPowerUp);
         body.createFixture(fixtureDefPowerUp);
 
     }

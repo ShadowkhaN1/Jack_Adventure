@@ -1,42 +1,83 @@
 package com.lukaszneumann.jackadventure;
 
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 /**
  * Created by Lukasz on 2014-11-11.
  */
 public class Background extends Sprite {
 
-    static float WIDTH = 0;
-    static float HEIGHT = 0;
-    static float MAX_VELOCITY = 1500;
 
-    private Vector2 position = new Vector2();
-    private Vector2 velocity = new Vector2();
+    private MyGame myGame;
+    private WorldGame worldGame;
+    private Body body;
 
 
-    public Background(Texture texture) {
-        super(texture);
+    public Background(MyGame myGame, WorldGame worldGame, Sprite sprite) {
 
-        WIDTH = getTexture().getWidth() * 0.01f;
-        HEIGHT = getTexture().getHeight() * 0.01f;
-        setSize(WIDTH, HEIGHT);
+        this.myGame = myGame;
+        this.worldGame = worldGame;
 
-        position.add(0, 0);
-        setPosition(position.x, position.y);
+        set(sprite);
+        setSize(myGame.WIDTH_SCREEN, this.getHeight());
+        setOriginCenter();
+        setPosition(0, 0);
 
+        createPhysics();
+
+    }
+
+
+    public void update(float deltaTime, boolean isDead) {
+
+
+        setX((body.getPosition().x * WorldGame.METERS_TO_PIXELS) - this.getWidth() / 2);
+        setY((body.getPosition().y * WorldGame.METERS_TO_PIXELS) - this.getHeight() / 2);
+
+
+        if (isDead == true) {
+            body.setType(BodyDef.BodyType.DynamicBody);
+
+        } else if (getY() < 5 * -myGame.HEIGHT_SCREEN) {
+            body.setType(BodyDef.BodyType.StaticBody);
+        }
+
+
+        if (this.getY() > 0) {
+            setY(0);
+        }
     }
 
 
-    public void update(float deltaTime) {
+    private void createPhysics() {
 
-        velocity.y = -MAX_VELOCITY;
-        velocity.scl(deltaTime);
-        position.add(velocity);
-        setPosition(position.x, position.y);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(this.getWidth() * WorldGame.PIXELS_TO_METERS, this.getHeight() * WorldGame.PIXELS_TO_METERS);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.isSensor = true;
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.x = (this.getX() + this.getWidth() / 2) * WorldGame.PIXELS_TO_METERS;
+        bodyDef.position.y = (this.getY() + this.getHeight() / 2) * WorldGame.PIXELS_TO_METERS;
+
+        body = worldGame.getWorld().createBody(bodyDef);
+        body.createFixture(fixtureDef);
+
+        shape.dispose();
 
     }
+
+    private void destroyBody() {
+        worldGame.getWorld().destroyBody(body);
+    }
+
+
 }

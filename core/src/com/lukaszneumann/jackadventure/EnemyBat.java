@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 /**
  * Created by Lukasz on 2015-01-14.
@@ -16,25 +16,29 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 public class EnemyBat extends Sprite {
 
     private MyGame myGame;
+    private WorldGame worldGame;
     private Animation animation;
     private Body bodyBat;
     private float frameDuration = 0.15f;
     private float stateTime = 0;
     private TextureRegion[] textureRegions;
 
-    public EnemyBat(MyGame myGame) {
+    public EnemyBat(MyGame myGame, WorldGame worldGame) {
         this.myGame = myGame;
+        this.worldGame = worldGame;
 
         textureRegions = new TextureRegion[4];
-        textureRegions[0] = new TextureRegion(myGame.content.getAssetManager().get("Enemy/Bat (1).png", Texture.class));
-        textureRegions[1] = new TextureRegion(myGame.content.getAssetManager().get("Enemy/Bat (2).png", Texture.class));
-        textureRegions[2] = new TextureRegion(myGame.content.getAssetManager().get("Enemy/Bat (3).png", Texture.class));
-        textureRegions[3] = new TextureRegion(myGame.content.getAssetManager().get("Enemy/Bat (4).png", Texture.class));
+        textureRegions[0] = new TextureRegion(myGame.content.getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Enemy/Bat (1).png", Texture.class));
+        textureRegions[1] = new TextureRegion(myGame.content.getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Enemy/Bat (2).png", Texture.class));
+        textureRegions[2] = new TextureRegion(myGame.content.getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Enemy/Bat (3).png", Texture.class));
+        textureRegions[3] = new TextureRegion(myGame.content.getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Enemy/Bat (4).png", Texture.class));
 
         animation = new Animation(frameDuration, textureRegions);
         animation.setPlayMode(Animation.PlayMode.LOOP);
 
-        setSize(textureRegions[0].getRegionWidth(), textureRegions[0].getRegionHeight());
+        float scale = MathUtils.random(0.7f, 1f);
+
+        setSize(textureRegions[0].getRegionWidth() * scale, textureRegions[0].getRegionHeight() * scale);
         setOriginCenter();
         setPosition(MathUtils.random(0, myGame.WIDTH_SCREEN - this.getWidth()), myGame.HEIGHT_SCREEN + this.getHeight());
 
@@ -56,14 +60,14 @@ public class EnemyBat extends Sprite {
 
     private void createPhysics() {
 
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(this.getWidth() / 2 * WorldGame.PIXELS_TO_METERS, this.getHeight() / 2 * WorldGame.PIXELS_TO_METERS);
+        CircleShape circleShape = new CircleShape();
+        circleShape.setRadius(this.getWidth() / 2 * WorldGame.PIXELS_TO_METERS);
 
         FixtureDef fixtureDefBat = new FixtureDef();
-        fixtureDefBat.shape = polygonShape;
+        fixtureDefBat.shape = circleShape;
         fixtureDefBat.density = 1f;
-        fixtureDefBat.restitution = 0.8f;
-        fixtureDefBat.friction = 0.3f;
+        fixtureDefBat.restitution = 0.f;
+        fixtureDefBat.friction = 0.f;
         fixtureDefBat.filter.categoryBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.Player);
         fixtureDefBat.filter.maskBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.Player);
 
@@ -73,15 +77,15 @@ public class EnemyBat extends Sprite {
         bodyDefBat.position.y = (this.getY() - this.getOriginY()) * WorldGame.PIXELS_TO_METERS;
 
 
-        bodyBat = myGame.worldGame.getWorld().createBody(bodyDefBat);
+        bodyBat = worldGame.getWorld().createBody(bodyDefBat);
         bodyBat.createFixture(fixtureDefBat);
 
-        polygonShape.dispose();
+        circleShape.dispose();
 
     }
 
     public void destroyBody() {
-        myGame.worldGame.getWorld().destroyBody(bodyBat);
+        worldGame.getWorld().destroyBody(bodyBat);
     }
 
 }

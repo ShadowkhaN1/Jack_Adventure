@@ -1,6 +1,10 @@
 package com.lukaszneumann.jackadventure;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -17,23 +21,54 @@ public class Candy extends Sprite {
     public static int BLUE_SCORE = 5;
 
     private MyGame myGame;
+    private WorldGame worldGame;
+    private RayHandler rayHandler;
     private Body candyBody;
-
-
     private int point = 0;
-    private float angleBetween = 0;
+    PointLight light;
+    private Color colorCandy;
+
+    private boolean isFollowTheObject = false;
+    private float followPositionX = 0;
+    private float followPositionY = 0;
 
 
-    public Candy(MyGame myGame) {
+    public Candy(MyGame myGame, WorldGame worldGame, RayHandler rayHandler) {
         this.myGame = myGame;
+        this.worldGame = worldGame;
+        this.rayHandler = rayHandler;
     }
 
 
     public void update() {
 
+        if (isFollowTheObject == false) {
+            candyBody.setLinearVelocity(0, worldGame.getWorld().getGravity().y);
+
+        } else {
+            followTheObject(followPositionX, followPositionY);
+        }
+
+
         setX((candyBody.getPosition().x * WorldGame.METERS_TO_PIXELS) - this.getWidth() / 2);
         setY((candyBody.getPosition().y * WorldGame.METERS_TO_PIXELS) - this.getHeight() / 2);
 
+
+        light.setPosition(this.getX() + this.getOriginX(), this.getY() + this.getOriginY());
+    }
+
+    private void followTheObject(float x, float y) {
+
+
+        float a = candyBody.getPosition().x - x * WorldGame.PIXELS_TO_METERS;
+        float b = candyBody.getPosition().y - y * WorldGame.PIXELS_TO_METERS;
+
+
+        float angle = MathUtils.atan2(b, a);
+
+        float velocityX = (float) ((double) worldGame.getWorld().getGravity().y / Math.tan(angle));
+
+        candyBody.setLinearVelocity(1.5f * velocityX, 1.5f * worldGame.getWorld().getGravity().y);
     }
 
 
@@ -54,16 +89,24 @@ public class Candy extends Sprite {
         bodyDefCandy.position.y = (this.getY() + this.getHeight() / 2) * WorldGame.PIXELS_TO_METERS;
 
 
-        candyBody = myGame.worldGame.getWorld().createBody(bodyDefCandy);
+        candyBody = worldGame.getWorld().createBody(bodyDefCandy);
         candyBody.createFixture(fixtureDef);
         candyBody.setGravityScale(0.7f);
 
         circleShape.dispose();
 
+
+        light = new PointLight(rayHandler, 128, colorCandy, 2 * this.getWidth(), 0, 0);
+    }
+
+    public void setColorCandy(Color colorCandy) {
+        this.colorCandy = colorCandy;
     }
 
     public void destroyBody() {
-        myGame.worldGame.getWorld().destroyBody(candyBody);
+        light.remove();
+        light.dispose();
+        worldGame.getWorld().destroyBody(candyBody);
     }
 
 
@@ -76,4 +119,13 @@ public class Candy extends Sprite {
     }
 
 
+    public void setFollowTheObject(boolean followTheObject, float followPositionX, float followPositionY) {
+        this.isFollowTheObject = followTheObject;
+        this.followPositionX = followPositionX;
+        this.followPositionY = followPositionY;
+    }
+
+    public void setFollowObject(boolean followObject) {
+        this.isFollowTheObject = followObject;
+    }
 }

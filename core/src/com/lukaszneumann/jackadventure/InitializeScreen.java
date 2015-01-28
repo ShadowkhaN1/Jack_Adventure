@@ -48,12 +48,12 @@ public class InitializeScreen implements Screen {
     public void show() {
 
         regions = new TextureRegion[6];
-        regions[0] = new TextureRegion(new Texture(Gdx.files.internal("Jack/Copter/Idle (1).png")));
-        regions[1] = new TextureRegion(new Texture(Gdx.files.internal("Jack/Copter/Idle (2).png")));
-        regions[2] = new TextureRegion(new Texture(Gdx.files.internal("Jack/Copter/Idle (3).png")));
-        regions[3] = new TextureRegion(new Texture(Gdx.files.internal("Jack/Copter/Idle (4).png")));
-        regions[4] = new TextureRegion(new Texture(Gdx.files.internal("Jack/Copter/Idle (5).png")));
-        regions[5] = new TextureRegion(new Texture(Gdx.files.internal("Jack/Copter/Idle (6).png")));
+        regions[0] = new TextureRegion(new Texture(Gdx.files.internal(myGame.assetsHelper.usesDpi + "/" + "Jack/Copter/Idle (1).png")));
+        regions[1] = new TextureRegion(new Texture(Gdx.files.internal(myGame.assetsHelper.usesDpi + "/" + "Jack/Copter/Idle (2).png")));
+        regions[2] = new TextureRegion(new Texture(Gdx.files.internal(myGame.assetsHelper.usesDpi + "/" + "Jack/Copter/Idle (3).png")));
+        regions[3] = new TextureRegion(new Texture(Gdx.files.internal(myGame.assetsHelper.usesDpi + "/" + "Jack/Copter/Idle (4).png")));
+        regions[4] = new TextureRegion(new Texture(Gdx.files.internal(myGame.assetsHelper.usesDpi + "/" + "Jack/Copter/Idle (5).png")));
+        regions[5] = new TextureRegion(new Texture(Gdx.files.internal(myGame.assetsHelper.usesDpi + "/" + "Jack/Copter/Idle (6).png")));
 
 
         animation = new Animation(frameDuration, regions[0], regions[1], regions[2], regions[3], regions[4], regions[5]);

@@ -10,10 +10,12 @@ import com.badlogic.gdx.physics.box2d.Manifold;
  */
 public class MyContactListener implements ContactListener {
 
+    private boolean playerCollision = false;
+
+
 
     @Override
     public void beginContact(Contact contact) {
-
 
     }
 

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Created by Lukasz on 2014-11-27.
+ * Created by Lukasz on 2014-12-27.
  */
 public class GameObjectAnimation extends Sprite {
 
@@ -39,8 +39,8 @@ public class GameObjectAnimation extends Sprite {
 
     public void update(float deltaTime) {
         stateTime += deltaTime;
-        // width = animation.getKeyFrame(stateTime).getTexture().getWidth() * myGame.worldGame.PIXELS_TO_METERS;
-        // height = animation.getKeyFrame(stateTime).getTexture().getHeight() * myGame.worldGame.PIXELS_TO_METERS;
+        // width = animation.getKeyFrame(stateTimeAnimation).getTexture().getWidth() * myGame.worldGame.PIXELS_TO_METERS;
+        // height = animation.getKeyFrame(stateTimeAnimation).getTexture().getHeight() * myGame.worldGame.PIXELS_TO_METERS;
         // setSize(width, height);
         //setOriginCenter();
 

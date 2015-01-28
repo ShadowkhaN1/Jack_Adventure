@@ -1,6 +1,7 @@
 package com.lukaszneumann.jackadventure;
 
 import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 
 /**
@@ -9,6 +10,8 @@ import com.badlogic.gdx.graphics.Color;
 public class ExplosionSpike {
 
     private MyGame myGame;
+    private WorldGame worldGame;
+    private RayHandler rayHandler;
     private float radiusDistance = 0;
     private PointLight explosionLights;
     private int rays = 128;
@@ -17,9 +20,11 @@ public class ExplosionSpike {
     private boolean isDestroyed = false;
 
 
-    public ExplosionSpike(MyGame myGame, float radiusDistance, float positionX, float positionY) {
+    public ExplosionSpike(MyGame myGame, WorldGame worldGame, RayHandler rayHandler, float radiusDistance, float positionX, float positionY) {
 
         this.myGame = myGame;
+        this.worldGame = worldGame;
+        this.rayHandler = rayHandler;
 
         this.radiusDistance = radiusDistance;
         this.positionX = positionX;
@@ -33,7 +38,7 @@ public class ExplosionSpike {
     public void update(float deltaTime) {
 
         if (explosionLights.getDistance() < radiusDistance) {
-            explosionLights.setDistance(explosionLights.getDistance() + (-myGame.worldGame.getWorld().getGravity().y * deltaTime * radiusDistance / 4));
+            explosionLights.setDistance(explosionLights.getDistance() + (-worldGame.getWorld().getGravity().y * deltaTime * radiusDistance / 4));
 
         } else {
             isDestroyed = true;
@@ -43,7 +48,7 @@ public class ExplosionSpike {
 
     private void createExplosion() {
 
-        explosionLights = new PointLight(myGame.rayHandler, rays, Color.LIGHT_GRAY, 0, positionX, positionY);
+        explosionLights = new PointLight(rayHandler, rays, Color.LIGHT_GRAY, 0, positionX, positionY);
     }
 
     private void destroyExplosion() {

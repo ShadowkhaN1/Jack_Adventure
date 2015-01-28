@@ -5,9 +5,12 @@ package com.lukaszneumann.jackadventure;
  */
 public class ScoreCandy {
 
+    private MyGame myGame;
     private int score = 0;
+    private int goodScore = 30;
 
-    public ScoreCandy() {
+    public ScoreCandy(MyGame myGame) {
+        this.myGame = myGame;
     }
 
     public void setScore(int count) {
@@ -16,6 +19,11 @@ public class ScoreCandy {
 
     public void addScore(int count) {
         score += count;
+
+        if (score >= goodScore) {
+            goodScore = score + 30;
+            myGame.soundGame.getPlayerYeah();
+        }
     }
 
     public int getScore() {

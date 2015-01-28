@@ -14,16 +14,19 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 public class EnemySpike extends Sprite {
 
     private MyGame myGame;
+    private WorldGame worldGame;
     private Body bodySpike;
 
 
-    public EnemySpike(MyGame myGame) {
+    public EnemySpike(MyGame myGame, WorldGame worldGame) {
 
         this.myGame = myGame;
+        this.worldGame = worldGame;
 
+        float scale = MathUtils.random(0.7f, 1f);
 
-        set(new Sprite(myGame.content.getAssetManager().get("Enemy/Spike.png", Texture.class)));
-        //setScale(MathUtils.random(0.5f, 1f));
+        set(new Sprite(myGame.content.getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Enemy/Spike.png", Texture.class)));
+        setSize(this.getWidth() * scale, this.getHeight() * scale);
         setOriginCenter();
 
     }
@@ -46,7 +49,7 @@ public class EnemySpike extends Sprite {
         fixtureDefSpike.shape = circleShape;
         fixtureDefSpike.density = 1f;
         fixtureDefSpike.friction = 0.7f;
-        fixtureDefSpike.restitution = 0.9f;
+        fixtureDefSpike.restitution = 0f;
         fixtureDefSpike.filter.categoryBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.Player);
         fixtureDefSpike.filter.maskBits = myGame.filterCollision.getFilterCategory(FilterCollision.filterCategory.Player);
 
@@ -57,14 +60,14 @@ public class EnemySpike extends Sprite {
         bodyDefSpike.position.y = ((this.getY() + this.getOriginY()) * WorldGame.PIXELS_TO_METERS);
 
 
-        bodySpike = myGame.worldGame.getWorld().createBody(bodyDefSpike);
+        bodySpike = worldGame.getWorld().createBody(bodyDefSpike);
         bodySpike.createFixture(fixtureDefSpike);
 
         circleShape.dispose();
     }
 
     public void destroyBody() {
-        myGame.worldGame.getWorld().destroyBody(bodySpike);
+        worldGame.getWorld().destroyBody(bodySpike);
     }
 
 

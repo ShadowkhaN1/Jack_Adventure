@@ -6,19 +6,21 @@ package com.lukaszneumann.jackadventure;
 public class ScoreHeight {
 
     private MyGame myGame;
+    private WorldGame worldGame;
     private int score = 0;
     private float countResult = 0;
 
 
-    public ScoreHeight(MyGame myGame) {
+    public ScoreHeight(MyGame myGame, WorldGame worldGame) {
         this.myGame = myGame;
+        this.worldGame = worldGame;
     }
 
-    public void update(float deltaTime) {
+    public void update(float deltaTime, float startTime) {
 
-        countResult += (-myGame.worldGame.getWorld().getGravity().y * deltaTime);
+        countResult += (-worldGame.getGravity() * deltaTime);
 
-        if (countResult >= 1) {
+        if (countResult >= (startTime / worldGame.getWorld().getGravity().y) / 2) {
             countResult = 0;
             score++;
         }

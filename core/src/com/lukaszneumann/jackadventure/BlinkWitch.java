@@ -26,14 +26,14 @@ public class BlinkWitch extends Sprite {
     public BlinkWitch(MyGame myGame) {
 
         textureRegions = new TextureRegion[8];
-        textureRegions[0] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (1).png", Texture.class));
-        textureRegions[1] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (2).png", Texture.class));
-        textureRegions[2] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (3).png", Texture.class));
-        textureRegions[3] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (4).png", Texture.class));
-        textureRegions[4] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (5).png", Texture.class));
-        textureRegions[5] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (6).png", Texture.class));
-        textureRegions[6] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (7).png", Texture.class));
-        textureRegions[7] = new TextureRegion(myGame.getContent().getAssetManager().get("Explosion/Collectibles/Collect (8).png", Texture.class));
+        textureRegions[0] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (1).png", Texture.class));
+        textureRegions[1] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (2).png", Texture.class));
+        textureRegions[2] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (3).png", Texture.class));
+        textureRegions[3] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (4).png", Texture.class));
+        textureRegions[4] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (5).png", Texture.class));
+        textureRegions[5] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (6).png", Texture.class));
+        textureRegions[6] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (7).png", Texture.class));
+        textureRegions[7] = new TextureRegion(myGame.getContent().getAssetManager().get(myGame.assetsHelper.usesDpi + "/" + "Explosion/Collectibles/Collect (8).png", Texture.class));
 
 
         animation = new Animation(frameDuration, textureRegions);

@@ -1,14 +1,14 @@
 package com.lukaszneumann.jackadventure;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 /**
  * Created by Lukasz on 2014-12-01.
  */
-public class LoadingScreen implements Screen {
+public class LoadingScreen implements Screen, InputProcessor {
 
     private MyGame myGame;
     private BitmapFont text;
@@ -23,6 +23,8 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
+        Gdx.input.setInputProcessor(this);
 
         myGame.batch.begin();
 
@@ -43,7 +45,7 @@ public class LoadingScreen implements Screen {
     @Override
     public void show() {
 
-        text = myGame.initializeGame.getAssetManager().get("Font/text.fnt", BitmapFont.class);
+        text = myGame.initializeGame.getFont();
     }
 
     @Override
@@ -71,8 +73,47 @@ public class LoadingScreen implements Screen {
     @Override
     public void dispose() {
 
-        text.dispose();
+       // text.dispose();
+    }
 
 
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
