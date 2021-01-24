@@ -3,9 +3,7 @@ Video: https://www.youtube.com/watch?v=G-0qOQ7WcCU
 
 
 
- <article class="markdown-body entry-content" itemprop="mainContentOfPage"><p><a 
- href="https://play.google.com/store/apps/details?id=com.lukaszneumann.jackadventure.android"
- target="_blank"><img src="http://wrzucaj.net/images/2015/01/28/Launch_1buVpa.png" alt="logo" data-canonical-src="http://wrzucaj.net/images/2015/01/28/Launch_1.png" style="max-width:100%;"></a></p>
+![Example screenshot](/Screenshot.jpg)
  
  
 # The Game:
